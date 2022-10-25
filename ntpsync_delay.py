@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+import subprocess
 import configparser
 import logging
 import ntplib
@@ -52,7 +53,13 @@ def adjtime_c(time_s: int, time_us: int, so_filepath: str):
     logging.info("System clock is adjusting. This will run in the background.")
     return
 
-
+'''
+Call the OS date command to bring the time closer to speed up
+the adjtime call.
+'''
+def adjust_date(offset: float):
+    subprocess.run(["date", "-s", "{} seconds".format(offset)])
+    return
 
 
 if __name__ == "__main__":
@@ -80,9 +87,13 @@ if __name__ == "__main__":
     offset = get_offset(c, ntp_config['ntp_url'], int(ntp_config['ntp_port']),
                         int(ntp_config['number_requests']), int(ntp_config['timeout_s']))
 
-    
+    # If we are really far off, adjust quickly and then use adjtime.
+    if (abs(offset) > 1):
+        adjust_date(offset)
+        offset = get_offset(c, ntp_config['ntp_url'], int(ntp_config['ntp_port']),
+                            int(ntp_config['number_requests']), int(ntp_config['timeout_s']))
+        
     logging.info("Best offset calculated: {}".format(offset))
-
     seconds = int(offset)
     microseconds = int((offset - seconds)*1e+6)
     logging.debug("Seconds: {}".format(seconds))
@@ -90,3 +101,4 @@ if __name__ == "__main__":
 
     so_file = ntp_config['adjtime_so_path']
     adjtime_c(seconds, microseconds, so_file)
+    
