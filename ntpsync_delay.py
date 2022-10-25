@@ -88,7 +88,8 @@ if __name__ == "__main__":
                         int(ntp_config['number_requests']), int(ntp_config['timeout_s']))
 
     # If we are really far off, adjust quickly and then use adjtime.
-    if (abs(offset) > 1):
+    if (abs(offset) > 0.128):
+        logging.warning("Offset is too big {}s. Stepping time.".format(offset))
         adjust_date(offset)
         offset = get_offset(c, ntp_config['ntp_url'], int(ntp_config['ntp_port']),
                             int(ntp_config['number_requests']), int(ntp_config['timeout_s']))
