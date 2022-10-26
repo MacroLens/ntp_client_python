@@ -12,6 +12,6 @@ cp ntpsync_delay.py adjtime_ntp.c config.ini $NTP_DIR
 
 gcc -fPIC -shared -o $NTP_DIR/adjtime_ntp.so $NTP_DIR/adjtime_ntp.c
 
-cp ntpsync.service ntpsync.timer /etc/systemd/system
+cp service/ntpsync.service service/ntpsync.timer /etc/systemd/system
 systemctl daemon-reload
 systemctl enable --now ntpsync.timer
