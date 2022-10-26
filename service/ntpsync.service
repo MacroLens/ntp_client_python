@@ -1,0 +1,12 @@
+[Unit]
+Description=Synchronize system time to an NTP server
+After=network.target
+ 
+[Service]
+Type=oneshot
+WorkingDirectory=/usr/local/sbin/ntp_sync/
+ExecStart=/usr/local/sbin/ntp_sync/ntpsync_delay.py
+User=root
+ 
+[Install]
+WantedBy=multi.user.target

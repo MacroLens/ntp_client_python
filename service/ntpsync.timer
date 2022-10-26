@@ -1,0 +1,10 @@
+[Unit]
+Description=resynchronizing with the NTP server
+
+[Timer]
+# Run hourly
+OnCalendar=*-*-* *:00:00
+OnBootSec=30
+
+[Install]
+WantedBy=timers.target
